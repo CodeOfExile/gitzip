@@ -2,13 +2,14 @@ import { ungzip } from "pako";
 import GZipDoc from "./GZipDoc.js";
 import gzMap from "./gz-map.json";
 const vscode = require("vscode");
+const sharedApi = require("./shared");
 
 export default class GZipEdit {
   static register() {
     return vscode.window.registerCustomEditorProvider(GZipEdit.viewType, new GZipEdit());
   }
 
-  static viewType = "zipViewer.GZipEdit";
+  static viewType = "gitZipViewer.GZipEdit";
 
   constructor() {}
 
@@ -24,7 +25,7 @@ export default class GZipEdit {
    * @param {vscode.CancellationToken} _token
    */
   async resolveCustomEditor(document, panel, _token) {
-    var config = vscode.workspace.getConfiguration().zipViewer;
+    var config = vscode.workspace.getConfiguration().gitZipViewer;
     if (config.gzipEditorEnabled) {
       panel.webview.html = this.htmlList.followPopup;
       doesItExist(document.uri.toString().split("."), document);
@@ -35,7 +36,7 @@ export default class GZipEdit {
 
   htmlList = {
     editorDisabled:
-      "<!DOCTYPE html><html><head></head><body><h1>The GZip editor has been disabled.</h1><p>You have disabled the GZip editor. Enable the setting `zipViewer.gzipEditorEnabled` to enable the editor.</p></body></html>",
+      "<!DOCTYPE html><html><head></head><body><h1>The GZip editor has been disabled.</h1><p>You have disabled the GZip editor. Enable the setting `gitZipViewer.gzipEditorEnabled` to enable the editor.</p></body></html>",
     followPopup: "<!DOCTYPE html><html><head></head><body><h1>Please follow popup instructions.</h1></body></html>",
   };
 }
@@ -46,34 +47,103 @@ export default class GZipEdit {
  * @param {GZipDoc} document
  */
 async function showFile(uri, document) {
-  vscode.workspace.fs.readFile(document.uri).then(async function (data) {
-    await vscode.workspace.fs.writeFile(uri, ungzip(data)).then(function () {
-      vscode.commands.executeCommand("vscode.open", uri);
-    });
-  });
+  try {
+    // Read GZip file content
+    const data = await vscode.workspace.fs.readFile(document.uri);
+    // Decompress content
+    const unzippedData = ungzip(data);
+    
+    // Get the file extension
+    const fileName = document.uri.path.split('/').pop();
+    const fileNameParts = fileName.split('.');
+    let ext = '';
+    
+    // Find the mapped extension
+    if (fileNameParts.length > 1) {
+      const compressedExt = fileNameParts[fileNameParts.length - 1].toLowerCase();
+      for (let i = 0; i < gzMap.mappings.length; i++) {
+        if (gzMap.mappings[i].compressed === compressedExt) {
+          ext = gzMap.mappings[i].inflated;
+          break;
+        }
+      }
+    }
+    
+    // Try to preview in the editor
+    try {
+      const tempFile = await vscode.workspace.openTextDocument({ content: Buffer.from(unzippedData).toString('utf8') });
+      await vscode.window.showTextDocument(tempFile);
+      
+      // Provide save options
+      vscode.window.showInformationMessage(
+        `GZip file opened in editor. Would you like to save the uncompressed content?`,
+        'Save As...'
+      ).then(async (choice) => {
+        if (choice === 'Save As...') {
+          // Prepare file filters
+          const filters = {};
+          if (ext) {
+            // If there is an extension, add the corresponding filter
+            filters[`${ext.toUpperCase()} Files`] = [ext];
+          }
+          filters['All Files'] = ['*'];
+          
+          const saveUri = await vscode.window.showSaveDialog({
+            defaultUri: vscode.Uri.joinPath(
+              vscode.workspace.workspaceFolders[0].uri,
+              `${fileName.substring(0, fileName.lastIndexOf('.'))}${ext ? '.' + ext : ''}`
+            ),
+            filters: filters
+          });
+          
+          if (saveUri) {
+            await vscode.workspace.fs.writeFile(saveUri, unzippedData);
+            vscode.window.showInformationMessage(`File saved to ${saveUri.fsPath}`);
+          }
+        }
+      });
+    } catch (err) {
+      // If previewing in the editor fails, directly provide save options
+      vscode.window.showInformationMessage(
+        `This appears to be a binary file. Would you like to save it?`,
+        'Save As...'
+      ).then(async (choice) => {
+        if (choice === 'Save As...') {
+          // Prepare file filters
+          const filters = {};
+          if (ext) {
+            // If there is an extension, add the corresponding filter
+            filters[`${ext.toUpperCase()} Files`] = [ext];
+          }
+          filters['Binary Files'] = ['bin'];
+          filters['All Files'] = ['*'];
+          
+          const saveUri = await vscode.window.showSaveDialog({
+            defaultUri: vscode.Uri.joinPath(
+              vscode.workspace.workspaceFolders[0].uri,
+              `${fileName.substring(0, fileName.lastIndexOf('.'))}${ext ? '.' + ext : '.bin'}`
+            ),
+            filters: filters
+          });
+          
+          if (saveUri) {
+            await vscode.workspace.fs.writeFile(saveUri, unzippedData);
+            vscode.window.showInformationMessage(`File saved to ${saveUri.fsPath}`);
+          }
+        }
+      });
+    }
+  } catch (err) {
+    vscode.window.showErrorMessage(`Failed to open GZip file: ${err.message}`);
+  }
 }
 
 /**
- * A wrapper to check to see if file exists before writing.
+ * 处理GZip文件的打开
  * @param {String[]} _uri Expects `uri.toString().split(".")`
  * @param {GZipDoc} document The CustomDocument data that needs to be passed on
  */
-function doesItExist(_uri, document) {
-  var config = vscode.workspace.getConfiguration().zipViewer;
-  var ext = _uri.pop();
-  for (var i = 0; i < gzMap.mappings.length; i++) {
-    if (gzMap.mappings[i].compressed === ext) {
-      _uri.push(gzMap.mappings[i].inflated);
-    }
-  }
-  _uri[_uri.length - 2] += config.unzippedSuffix;
-  var uri = vscode.Uri.parse(_uri.join("."));
-  vscode.workspace.fs.stat(uri).then(
-    function () {
-      doesItExist((_uri.join(".") + "_gz." + ext).toString().split("."), document);
-    },
-    function () {
-      showFile(uri, document);
-    }
-  );
+async function doesItExist(_uri, document) {
+  // Directly display the file content, no need to check if the file exists
+  showFile(null, document);
 }

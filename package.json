@@ -1,13 +1,14 @@
 {
-  "name": "zip-viewer",
-  "displayName": "Zip Tools",
-  "description": "%extension.description%",
-  "publisher": "adamraichu",
+  "name": "gitzip",
+  "displayName": "GitZip",
+  "description": "An extension which allows for the manipulation of zip (jar, vsix, etc.) files. Now with GZip!",
+  "publisher": "exilecode",
   "icon": "logo.png",
   "version": "3.18.0",
   "license": "MIT",
   "author": {
-    "name": "AdamRaichu"
+    "name": "Indie Sewell",
+    "email": "contact@exilecode.com"
   },
   "categories": [
     "Visualization"
@@ -22,46 +23,58 @@
     "zip"
   ],
   "repository": {
-    "url": "https://github.com/AdamRaichu/vscode-zip-viewer"
+    "url": "https://github.com/CodeOfExile/gitzip"
   },
   "main": "./dist/main.js",
   "browser": "./dist/main.js",
-  "activationEvents": [],
+  "activationEvents": [
+    "onFileSystem:file",
+    "onFileSystem:folder"
+  ],
   "engines": {
     "vscode": "^1.76.0"
   },
   "contributes": {
     "commands": [
       {
-        "command": "zipViewer.extract",
-        "title": "%command.extract%",
+        "command": "gitZipViewer.extract",
+        "title": "GitZip: Extract (unzip) a zip file from the workspace",
         "shortTitle": "%command.extract.short%"
       },
       {
-        "command": "zipViewer.zip",
-        "title": "%command.zip%",
+        "command": "gitZipViewer.zip",
+        "title": "GitZip: Create a zip file from folder",
         "shortTitle": "%command.zip.short%"
       },
       {
-        "command": "zipViewer.openFileWithEditor",
-        "title": "%command.openFileWithEditor%",
-        "shortTitle": "%command.openFileWithEditor.short%",
-        "icon": "$(explorer-view-icon)"
+        "command": "gitZipViewer.openFileWithEditor",
+        "title": "GitZip: Open a zip file with a custom editor",
+        "shortTitle": "%command.openFileWithEditor.short%"
       },
       {
-        "command": "zipViewer.gzip",
-        "title": "%command.gzip%",
+        "command": "gitZipViewer.gzip",
+        "title": "GitZip: Compress file with GZip compression.",
         "shortTitle": "%command.gzip.short%"
+      },
+      {
+        "command": "gitZipViewer.zipFile",
+        "title": "GitZip: Compress file with Zip compression.",
+        "shortTitle": "Zip File"
+      },
+      {
+        "command": "gitZipViewer.zipFiles",
+        "title": "GitZip: Compress multiple files with Zip compression.",
+        "shortTitle": "Zip Multiple Files"
       }
     ],
     "configuration": [
       {
-        "title": "Zip Tools",
+        "title": "GitZip",
         "properties": {
-          "zipViewer.zipTypes": {
-            "type": "array",
-            "description": "%config.zipTypes.description%",
-            "items": {
+          "gitZipViewer.zipTypes": {
+             "type": "array",
+             "description": "%config.zipTypes.description%",
+             "items": {
               "type": "string",
               "title": "%config.zipTypes.items.title%",
               "pattern": "\\.([A-Za-z0-9\\.])"
@@ -69,31 +82,31 @@
             "deprecationMessage": "%config.zipTypes.deprecated%",
             "default": []
           },
-          "zipViewer.picky": {
-            "type": "boolean",
-            "markdownDescription": "%config.picky.description%",
+          "gitZipViewer.picky": {
+             "type": "boolean",
+             "markdownDescription": "%config.picky.description%",
             "default": false,
             "deprecationMessage": "%config.zipTypes.deprecated%"
           },
-          "zipViewer.unzippedSuffix": {
-            "type": "string",
-            "markdownDescription": "%config.unzippedSuffix.description%",
+          "gitZipViewer.unzippedSuffix": {
+             "type": "string",
+             "markdownDescription": "%config.unzippedSuffix.description%",
             "default": "_unzipped",
             "pattern": "^[^\\/?%*:|\"<>]+$"
           },
-          "zipViewer.gzipEditorEnabled": {
-            "type": "boolean",
-            "markdownDescription": "%config.gzipEditorEnabled.description%",
+          "gitZipViewer.gzipEditorEnabled": {
+             "type": "boolean",
+             "markdownDescription": "%config.gzipEditorEnabled.description%",
             "default": true
           },
-          "zipViewer.deleteOldFileWhenGzipping": {
-            "type": "boolean",
-            "markdownDescription": "%config.deleteOldFileWhenGzipping%",
-            "default": true
+          "gitZipViewer.deleteOldFileWhenGzipping": {
+             "type": "boolean",
+             "markdownDescription": "%config.deleteOldFileWhenGzipping%",
+            "default": false
           },
-          "zipViewer.textFileAssociations": {
-            "type": "array",
-            "description": "%config.textFileAssociations.description%",
+          "gitZipViewer.textFileAssociations": {
+             "type": "array",
+             "description": "%config.textFileAssociations.description%",
             "items": {
               "type": "object",
               "properties": {
@@ -108,14 +121,14 @@
               }
             }
           },
-          "zipViewer.useLegacyGzipNamingConvention": {
-            "type": "boolean",
-            "markdownDescription": "%config.useLegacyGzipNamingConvention%",
+          "gitZipViewer.useLegacyGzipNamingConvention": {
+             "type": "boolean",
+             "markdownDescription": "%config.useLegacyGzipNamingConvention%",
             "default": false
           },
-          "zipViewer.ZipEdit.additionalCSS": {
-            "type": "string",
-            "markdownDescription": "%config.ZipEdit.additionalCSS.description%",
+          "gitZipViewer.ZipEdit.additionalCSS": {
+             "type": "string",
+             "markdownDescription": "%config.ZipEdit.additionalCSS.description%",
             "default": "%config.ZipEdit.additionalCSS.default%"
           }
         }
@@ -123,8 +136,8 @@
     ],
     "customEditors": [
       {
-        "viewType": "zipViewer.ZipEdit",
-        "displayName": "Zip Tools",
+        "viewType": "gitZipViewer.ZipEdit",
+        "displayName": "GitZip",
         "selector": [
           {
             "filenamePattern": "*.zip"
@@ -214,8 +227,8 @@
         "priority": "default"
       },
       {
-        "viewType": "zipViewer.GZipEdit",
-        "displayName": "Zip Tools",
+        "viewType": "gitZipViewer.GZipEdit",
+        "displayName": "GitZip",
         "selector": [
           {
             "filenamePattern": "*.gz"
@@ -242,13 +255,18 @@
     "menus": {
       "explorer/context": [
         {
-          "command": "zipViewer.zip",
+          "command": "gitZipViewer.zip",
           "when": "explorerResourceIsFolder",
           "group": "2_workspace"
         },
         {
-          "command": "zipViewer.gzip",
+          "command": "gitZipViewer.gzip",
           "when": "!explorerResourceIsFolder && resourceExtname != .gz && resourceExtname != .gzip && resourceExtname != .svgz && resourceExtname != .emz && resourceExtname != .tg && resourceExtname != .tgz",
+          "group": "2_workspace"
+        },
+        {
+          "command": "gitZipViewer.zipFile",
+          "when": "!explorerResourceIsFolder",
           "group": "2_workspace"
         }
       ]
@@ -265,9 +283,11 @@
   "dependencies": {
     "@vscode/webview-ui-toolkit": "^1.2.2",
     "jszip": "^3.10.1",
-    "pako": "^2.1.0"
+    "pako": "^2.1.0",
+    "path-browserify": "^1.0.1"
   },
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "watch": "webpack --watch"
   }
 }

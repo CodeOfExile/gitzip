@@ -17,4 +17,10 @@ module.exports = {
   optimization: {
     minimize: true,
   },
+  resolve: {
+    fallback: {
+      "path": require.resolve("path-browserify"),
+      "fs": false,
+    },
+  },
 };

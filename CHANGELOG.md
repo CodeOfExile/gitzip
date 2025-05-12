@@ -42,7 +42,7 @@ Add `.c4z` file extension to supported list.
 
 Update how file extensions are handled when gzipping files. ([#62](https://github.com/AdamRaichu/vscode-zip-viewer/issues/62))
 
-Add configuraion option `zipViewer.useLegacyGzipNamingConvention` which uses old behavior for naming gzipped files.
+Add configuraion option `gitZipViewer.useLegacyGzipNamingConvention` which uses old behavior for naming gzipped files.
 
 ## [3.11.0] - 2023-6-5
 
@@ -67,12 +67,12 @@ Add `.ear`, `.epub`, `.lpkg`, and `.war` file extensions.
 
 Add `.mctemplate` and `.mcproject` file extensions.
 
-Add the workspace setting for recognizing files inside zip files as text files without asking every time (`zipViewer.textFileAssociations`).
+Add the workspace setting for recognizing files inside zip files as text files without asking every time (`gitZipViewer.textFileAssociations`).
 See README for more details.
 
 ## [3.7.0] - 2023-3-27
 
-Make the command `zipViewer.zip` much faster, and allow for zipping much larger folders.
+Make the command `gitZipViewer.zip` much faster, and allow for zipping much larger folders.
 
 **(For zipping the `.github` folder of this repository):**
 
@@ -97,7 +97,7 @@ This was fixed by adding/modifying these lines of code.
 
 ## [3.4.0] - 2023-2-7
 
-Remove the settings `zipViewer.zipTypes` and `zipViewer.picky` as they don't make sense.
+Remove the settings `gitZipViewer.zipTypes` and `gitZipViewer.picky` as they don't make sense.
 
 ## [3.3.0] - 2023-2-3
 
@@ -109,13 +109,13 @@ Add file extension mappings. (e.g. When you open an svgz file, it unzips as .svg
 
 ## [3.2.0] - 2023-2-1
 
-Add setting `zipViewer.gzipEditorEnabled`.
+Add setting `gitZipViewer.gzipEditorEnabled`.
 
 ## [3.1.0] - 2023-1-31
 
 Add a context menu item to folders in the explorer view.
 
-Remove the target path selection from `zipViewer.zip`.
+Remove the target path selection from `gitZipViewer.zip`.
 It would be confusing in the context of the context menu command activation.
 
 ## [3.0.0] - 2023-1-28
@@ -132,7 +132,7 @@ Add `.xlsx` file extension to built-in supported list ([#15](https://github.com/
 
 Add `.ipa` file extension to built-in supported list.
 
-The default value of the setting `zipViewer.picky` is now `false`.
+The default value of the setting `gitZipViewer.picky` is now `false`.
 
 ## [2.3.2] - 2023-1-10
 
@@ -145,7 +145,7 @@ See README for usage.
 
 ## [2.2.0] - 2022-12-30
 
-Add command `zipViewer.openFileWithEditor`.
+Add command `gitZipViewer.openFileWithEditor`.
 This command allows the user to open a zip file that has a file extension not on the built in list with the custom editor.
 
 ## [2.1.7] - 2022-12-26
@@ -168,30 +168,30 @@ Added:
 
 Added:
 
-- Command "Zip Viewer: Create a zip file from folder" (`AdamRaichu.zipViewer.zip`)
+- Command "Zip Viewer: Create a zip file from folder" (`AdamRaichu.gitZipViewer.zip`)
   - Prompts user to select a folder to zip.
   - Prompts user to select a target folder.
   - Creates a file with the name `<folderToZipName>.zip` in the target folder.
 
 ## [1.1.2] - 2022-11-21
 
-Extension now has setting `zipViewer.unzippedSuffix`, which controls the string added to the end of file names when unzipping.
+Extension now has setting `gitZipViewer.unzippedSuffix`, which controls the string added to the end of file names when unzipping.
 
 ## [1.1.1] - 2022-11-19
 
-Extension now has setting `zipViewer.zipTypes` and `zipViewer.picky`. See [1.1.0-pre](#110-pre---2022-11-15) and README.
+Extension now has setting `gitZipViewer.zipTypes` and `gitZipViewer.picky`. See [1.1.0-pre](#110-pre---2022-11-15) and README.
 
 ## [1.1.0-pre] - 2022-11-15
 
 **Note**: This is a pre-release version of the extension. It needs to be manually user-enabled.
 
-Added settings `zipViewer.zipTypes` and `zipViewer.picky`. See README for more information.
+Added settings `gitZipViewer.zipTypes` and `gitZipViewer.picky`. See README for more information.
 
 ## [1.0.0] - 2022-11-12
 
 ### Features
 
-- Command "Zip: Extract a zip file from workspace" (`AdamRaichu.zipViewer.extract`)
+- Command "Zip: Extract a zip file from workspace" (`AdamRaichu.gitZipViewer.extract`)
 
   - Prompts user to select a zip file and a target folder.
   - Creates a folder in target folder with same name as zip file (minus file extension).

@@ -35,4 +35,5 @@ const sharedApi = {
   },
 };
 
-export default sharedApi;
+// Export using CommonJS syntax
+module.exports = sharedApi;

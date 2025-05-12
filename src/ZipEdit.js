@@ -33,7 +33,7 @@ export default class ZipEdit {
    * @static
    * @readonly
    */
-  static viewType = "zipViewer.ZipEdit";
+  static viewType = "gitZipViewer.ZipEdit";
 
   /**
    * Creates an instance of ZipEdit
@@ -49,15 +49,15 @@ export default class ZipEdit {
    * @param {vscode.CancellationToken} _token
    */
   async resolveCustomEditor(document, panel, _token) {
-    var extUri = vscode.extensions.getExtension("adamraichu.zip-viewer").extensionUri;
+    var extUri = vscode.extensions.getExtension("exilecode.gitzip").extensionUri;
 
-    console.log(ZipEdit.context.storageUri);
+    //console.log(ZipEdit.context.storageUri);
 
-    var customCSS = vscode.workspace.getConfiguration("zipViewer").get("ZipEdit.additionalCSS");
+    var customCSS = vscode.workspace.getConfiguration("gitZipViewer").get("ZipEdit.additionalCSS");
     if (customCSS.includes("</style>")) {
       customCSS = "";
       vscode.window.showErrorMessage(
-        "Hey! The custom CSS that you are trying to load contains the string `</style>`, which probably means someone is trying to do something nefarious. Don't worry, I prevented it from loading, but please check both your user settings and the workspace settings (zipViewer.ZipEdit.additionalCSS). (If it's in the workspace settings, maybe consider not using this workspace since someone is trying to attack you.)"
+        "Hey! The custom CSS that you are trying to load contains the string `</style>`, which probably means someone is trying to do something nefarious. Don't worry, I prevented it from loading, but please check both your user settings and the workspace settings (gitZipViewer.ZipEdit.additionalCSS). (If it's in the workspace settings, maybe consider not using this workspace since someone is trying to attack you.)"
       );
     }
 
@@ -101,7 +101,7 @@ export default class ZipEdit {
     );
     panel.webview.onDidReceiveMessage(async (msg) => {
       if (msg.command === "get") {
-        const config = vscode.workspace.getConfiguration("zipViewer");
+        const config = vscode.workspace.getConfiguration("gitZipViewer");
 
         /**
          * @type {string}
@@ -124,18 +124,19 @@ export default class ZipEdit {
 
         if (ext === "pdf") {
           handled = true;
-          var pdfViewerExt = vscode.extensions.getExtension("AdamRaichu.pdf-viewer");
+          // Try to get the PDF viewer extension
+          var pdfViewerExt = vscode.extensions.getExtension("AdamRaichu.pdf-viewer") || vscode.extensions.getExtension("exilecode.pdf-viewer");
           if (typeof pdfViewerExt === "undefined") {
             vscode.window
               .showInformationMessage(
-                "You need to install the extension `AdamRaichu.pdf-viewer` to preview pdf files. Would you like to install this extension? If so, click yes, install the extension, then try previewing this subfile again.",
+                "You need to install a PDF viewer extension to preview pdf files. Would you like to search for PDF viewer extensions?",
                 "Yes",
                 "No"
               )
               .then(function (choice) {
                 switch (choice) {
                   case "Yes":
-                    vscode.commands.executeCommand("workbench.extensions.search", "@id:AdamRaichu.pdf-viewer");
+                    vscode.commands.executeCommand("workbench.extensions.search", "pdf viewer");
                     break;
                   case "No":
                     break;
@@ -154,7 +155,7 @@ export default class ZipEdit {
           }
         }
 
-        // check if in settings (`zipViewer.textFileAssociations`)
+        // check if in settings (`gitZipViewer.textFileAssociations`)
         const textFileAssociations = config.get("textFileAssociations");
         for (var i = 0; i < textFileAssociations.length; i++) {
           if (document.uri.fsPath.substring(vscode.workspace.workspaceFolders[0].uri.fsPath.length) === textFileAssociations[i].zipPath && msg.uri === textFileAssociations[i].subfilePath) {
@@ -211,7 +212,7 @@ export default class ZipEdit {
           vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: "Extracting Selected Files" }, async function (progress, _token) {
             progress.report({ increment: 0 });
             var inc = 100 / uriList.length;
-            var config = vscode.workspace.getConfiguration().zipViewer;
+            var config = vscode.workspace.getConfiguration().gitZipViewer;
             for (var c = 0; c < uriList.length; c++) {
               await zipFileData.files[uriList[c]]
                 .async("uint8array", function (meta) {
