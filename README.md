@@ -1,4 +1,3 @@
-````markdown
 # GitZip - Better Zip Tool for Git Projects
 
 **GitZip** is a rebranded and enhanced version of the original *Zip Tools* VSCode extension, redesigned with Git workflows and developer usability in mind.
@@ -58,5 +57,3 @@ MIT License
 © 2025 Indie Sewell / CodeOfExile Team / https://exilecode.com
 
 ---
-
-```
