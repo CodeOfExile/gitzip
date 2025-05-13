@@ -52,3 +52,4 @@ __ai/
 
 # Project specific
 *.unzipped.*
+*.vsix
