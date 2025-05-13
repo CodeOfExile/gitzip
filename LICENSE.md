@@ -1,5 +1,6 @@
 MIT License
 
+Copyright (c) 2025 Indie Sewell / CodeOfExile
 Copyright (c) 2023 AdamRaichu
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
