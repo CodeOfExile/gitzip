@@ -1,10 +1,10 @@
 {
   "name": "gitzip",
   "displayName": "GitZip",
-  "description": "An extension which allows for the manipulation of zip (jar, vsix, etc.) files. Now with GZip!",
+  "description": "Smart compression tool for Git projects with intelligent .gitignore handling and flexible packaging options.",
   "publisher": "exilecode",
   "icon": "logo.png",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "license": "MIT",
   "author": {
     "name": "Indie Sewell",
@@ -72,9 +72,9 @@
         "title": "GitZip",
         "properties": {
           "gitZipViewer.zipTypes": {
-             "type": "array",
-             "description": "%config.zipTypes.description%",
-             "items": {
+            "type": "array",
+            "description": "%config.zipTypes.description%",
+            "items": {
               "type": "string",
               "title": "%config.zipTypes.items.title%",
               "pattern": "\\.([A-Za-z0-9\\.])"
@@ -83,30 +83,30 @@
             "default": []
           },
           "gitZipViewer.picky": {
-             "type": "boolean",
-             "markdownDescription": "%config.picky.description%",
+            "type": "boolean",
+            "markdownDescription": "%config.picky.description%",
             "default": false,
             "deprecationMessage": "%config.zipTypes.deprecated%"
           },
           "gitZipViewer.unzippedSuffix": {
-             "type": "string",
-             "markdownDescription": "%config.unzippedSuffix.description%",
+            "type": "string",
+            "markdownDescription": "%config.unzippedSuffix.description%",
             "default": "_unzipped",
             "pattern": "^[^\\/?%*:|\"<>]+$"
           },
           "gitZipViewer.gzipEditorEnabled": {
-             "type": "boolean",
-             "markdownDescription": "%config.gzipEditorEnabled.description%",
+            "type": "boolean",
+            "markdownDescription": "%config.gzipEditorEnabled.description%",
             "default": true
           },
           "gitZipViewer.deleteOldFileWhenGzipping": {
-             "type": "boolean",
-             "markdownDescription": "%config.deleteOldFileWhenGzipping%",
+            "type": "boolean",
+            "markdownDescription": "%config.deleteOldFileWhenGzipping%",
             "default": false
           },
           "gitZipViewer.textFileAssociations": {
-             "type": "array",
-             "description": "%config.textFileAssociations.description%",
+            "type": "array",
+            "description": "%config.textFileAssociations.description%",
             "items": {
               "type": "object",
               "properties": {
@@ -122,13 +122,13 @@
             }
           },
           "gitZipViewer.useLegacyGzipNamingConvention": {
-             "type": "boolean",
-             "markdownDescription": "%config.useLegacyGzipNamingConvention%",
+            "type": "boolean",
+            "markdownDescription": "%config.useLegacyGzipNamingConvention%",
             "default": false
           },
           "gitZipViewer.ZipEdit.additionalCSS": {
-             "type": "string",
-             "markdownDescription": "%config.ZipEdit.additionalCSS.description%",
+            "type": "string",
+            "markdownDescription": "%config.ZipEdit.additionalCSS.description%",
             "default": "%config.ZipEdit.additionalCSS.default%"
           }
         }
@@ -282,6 +282,7 @@
   },
   "dependencies": {
     "@vscode/webview-ui-toolkit": "^1.2.2",
+    "ignore": "^7.0.4",
     "jszip": "^3.10.1",
     "pako": "^2.1.0",
     "path-browserify": "^1.0.1"

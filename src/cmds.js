@@ -51,6 +51,9 @@ class cmds {
 
     // Register zip file command
     vscode.commands.registerCommand('gitZipViewer.zipFile',  cmds.zipFileCommand);
+    
+    // Register zip files command (alias for zipFile)
+    vscode.commands.registerCommand('gitZipViewer.zipFiles',  cmds.zipFileCommand);
   }
 
   static async extractCommand() {
@@ -126,6 +129,36 @@ class cmds {
         { placeHolder: 'Select output location' }
       );
       if (!outputMode) return;
+      
+      // Check if .git directory or .gitignore file exists
+      const { hasGit, hasGitignore } = await zipUtils.checkGitFiles(folderToZip.fsPath);
+      
+      // If Git-related files exist, ask user whether to exclude them
+      let excludeGitFiles = false;
+      if (hasGit || hasGitignore) {
+        const gitExcludeChoice = await vscode.window.showQuickPick(
+          [
+            {
+              label: '✅ Exclude Git Files',
+              description: 'Exclude .git/ directory and files ignored by .gitignore',
+              detail: 'Creates a clean zip file suitable for distribution',
+              picked: true
+            },
+            {
+              label: '❌ Include All Files',
+              description: 'Include all files, including .git/ and ignored files',
+              detail: 'Creates a complete backup including Git history'
+            }
+          ],
+          {
+            placeHolder: 'Git files detected. Do you want to exclude them from the zip?',
+            title: 'GitZip: Git Files Exclusion'
+          }
+        );
+        
+        if (!gitExcludeChoice) return;
+        excludeGitFiles = gitExcludeChoice.label.startsWith('✅');
+      }
 
       let customPath;
       if (outputMode === 'Custom Path') {
@@ -137,11 +170,12 @@ class cmds {
       }
 
       // Create zip with selected options
-      const outputPath = await zipUtils.createZip(folderToZip, {
+      const outputPath = await zipUtils.createZipFromFolder(folderToZip, {
         mode: mode.toLowerCase().split(' ')[0],
         customName,
         outputMode: outputMode.toLowerCase().split(' ')[0],
-        customPath
+        customPath,
+        excludeGitFiles
       });
       
       // Show success message
