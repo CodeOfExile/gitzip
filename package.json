@@ -4,7 +4,7 @@
   "description": "An extension which allows for the manipulation of zip (jar, vsix, etc.) files. Now with GZip!",
   "publisher": "exilecode",
   "icon": "logo.png",
-  "version": "3.18.0",
+  "version": "1.0.0",
   "license": "MIT",
   "author": {
     "name": "Indie Sewell",
