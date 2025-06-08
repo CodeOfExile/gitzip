@@ -21,6 +21,17 @@ uikit.provideVSCodeDesignSystem().register(uikit.vsCodeButton(), uikit.vsCodeChe
  * @type {HTMLButtonElement}
  */
 var extract = document.getElementById("extract-select");
+var extractFolder = document.getElementById("extract-folder");
+var extractHere = document.getElementById("extract-here");
+
+extractFolder.addEventListener("click", function () {
+  vscode.postMessage({ command: "extract-all-folder" });
+});
+
+extractHere.addEventListener("click", function () {
+  vscode.postMessage({ command: "extract-all-here" });
+});
+
 extract.addEventListener("click", function () {
   /**
    * @type {NodeListOf<HTMLInputElement>}

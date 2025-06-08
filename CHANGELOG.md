@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2025-06-09
+
+### Added
+- **One-Click Extraction**: Added "Extract to Folder" and "Extract Here" buttons in the Zip Editor for instant unpacking of the entire archive, significantly improving user experience.
+
+### Fixed
+- **UI Bug**: Fixed an issue where the "Extract to <Zip Name> Folder" button did not dynamically display the actual name of the zip file.
+
+### Changed
+- **Documentation**: Updated `README.md` to reflect the new one-click extraction feature and corrected the build instructions.
+
+## [2.1.0] - 2025-06-09
+
+### Added
+- **Advanced Git Handling**: Introduced three distinct Git handling modes for compression:
+  1.  **Exclude .git & .gitignore**: For clean public releases.
+  2.  **Keep .git & .gitignore**: For clean repository backups.
+  3.  **Include All**: For complete project snapshots.
+
+### Changed
+- **User Interface**: Replaced the simple Git exclusion prompt with a clearer, more powerful three-option menu.
+- **Documentation**: Updated `README.md` with details on the new Git handling modes, added more keywords for better search visibility (SEO), and expanded the target user descriptions.
+
 ## [2.0.0] - 2025-05-14
 
 ### Added

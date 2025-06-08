@@ -4,7 +4,7 @@
   "description": "Smart compression tool for Git projects with intelligent .gitignore handling and flexible packaging options.",
   "publisher": "exilecode",
   "icon": "logo.png",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "license": "MIT",
   "author": {
     "name": "Indie Sewell",

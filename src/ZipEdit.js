@@ -64,6 +64,7 @@ export default class ZipEdit {
     panel.webview.options = {
       enableScripts: true,
     };
+    const zipName = document.uri.path.split("/").pop();
     panel.webview.html = `<!DOCTYPE html>
 <html>
 <head>
@@ -76,6 +77,9 @@ export default class ZipEdit {
 <body>
   <h1 id="loading">Loading zip file content...</h1>
   <div id="toolbar">
+    <vscode-button id="extract-folder">Extract to ${zipName.replace(/\.zip$/i, '')}/</vscode-button>
+    <vscode-button id="extract-here">Extract Here</vscode-button>
+    <hr>
     <vscode-button id="extract-select">Extract Selected Files Only</vscode-button>
   </div>
   <div id="target"></div>
@@ -229,6 +233,35 @@ export default class ZipEdit {
             }
             return;
           });
+        });
+      } else if (msg.command === "extract-all-folder" || msg.command === "extract-all-here") {
+        const withFolder = msg.command === "extract-all-folder";
+        const docPath = document.uri.path;
+        const parentDir = docPath.substring(0, docPath.lastIndexOf('/'));
+        const zipName = docPath.split("/").pop().replace(/\.zip$/i, '');
+        const targetDir = withFolder ? vscode.Uri.file(`${parentDir}/${zipName}`) : vscode.Uri.file(parentDir);
+
+        vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `Extracting all files to ${withFolder ? zipName : 'current folder'}...` }, async (progress, _token) => {
+          progress.report({ increment: 0 });
+          const files = Object.values(zipFileData.files).filter(f => !f.dir);
+          const inc = 100 / files.length;
+
+          for (const file of files) {
+            await file.async("uint8array", (meta) => {
+              progress.report({ increment: inc * (meta.percent / 100) });
+            }).then(async (data) => {
+              const destPath = vscode.Uri.joinPath(targetDir, file.name);
+              // Ensure parent directory of the file exists
+              const fileParent = destPath.path.substring(0, destPath.path.lastIndexOf('/'));
+              await vscode.workspace.fs.createDirectory(vscode.Uri.file(fileParent));
+              await vscode.workspace.fs.writeFile(destPath, data);
+            }).catch(err => {
+              console.error(err);
+              vscode.window.showErrorMessage(`Failed to extract ${file.name}: ${err}`);
+            });
+          }
+          vscode.window.showInformationMessage(`Successfully extracted all files.`);
+          return;
         });
       }
     });

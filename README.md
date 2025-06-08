@@ -37,7 +37,13 @@ Originally inspired by the limitations of existing zip extensions, GitZip extend
   * English, Spanish, and more supported
   * Localized UI and notifications
 
-* ⚡ **Fast Access Options**:
+* ⚡ **One-Click Extraction**:
+
+  * **Extract to Folder**: Instantly unpacks the entire archive into a new folder named after the zip file.
+  * **Extract Here**: Unpacks all contents directly into the current directory.
+  * No need to manually select files first.
+
+* 🚀 **Fast Access Options**:
 
   * Context menu on folders
   * Command palette shortcuts
@@ -54,12 +60,13 @@ Originally inspired by the limitations of existing zip extensions, GitZip extend
 Search for `GitZip` in the [VSCode Marketplace](https://marketplace.visualstudio.com/) or install manually:
 
 ```bash
-# Manual installation
+# Build from Source
 git clone https://github.com/CodeOfExile/gitzip
 cd gitzip
 npm install
-npm run build
+npx vsce package # This will compile the code and create a .vsix file
 ```
+Then, go to the VSCode Extensions view, click the `...` menu, and select `Install from VSIX...` to install the generated `gitzip-*.vsix` file.
 
 ## 🛠 Usage & Configuration
 
