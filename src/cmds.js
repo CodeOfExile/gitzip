@@ -134,30 +134,37 @@ class cmds {
       const { hasGit, hasGitignore } = await zipUtils.checkGitFiles(folderToZip.fsPath);
       
       // If Git-related files exist, ask user whether to exclude them
-      let excludeGitFiles = false;
+      let gitExclusionMode = 'include_all'; // Default: include everything if no choice is made
       if (hasGit || hasGitignore) {
         const gitExcludeChoice = await vscode.window.showQuickPick(
           [
             {
-              label: '✅ Exclude Git Files',
-              description: 'Exclude .git/ directory and files ignored by .gitignore',
-              detail: 'Creates a clean zip file suitable for distribution',
-              picked: true
+              id: 'exclude_git',
+              label: 'Exclude .git & .gitignore',
+              description: 'Removes both. Still excludes files in .gitignore.',
+              detail: 'Use for clean public releases.'
             },
             {
-              label: '❌ Include All Files',
-              description: 'Include all files, including .git/ and ignored files',
-              detail: 'Creates a complete backup including Git history'
+              id: 'respect_gitignore',
+              label: 'Keep .git & .gitignore',
+              description: 'Keeps both. Still excludes files in .gitignore.',
+              detail: 'Use for clean repository backups.'
+            },
+            {
+              id: 'include_all',
+              label: 'Include All (Ignore Rules)',
+              description: 'Keeps everything. Ignores rules in .gitignore.',
+              detail: 'Use for a complete project snapshot.'
             }
           ],
           {
-            placeHolder: 'Git files detected. Do you want to exclude them from the zip?',
-            title: 'GitZip: Git Files Exclusion'
+            placeHolder: 'Git files detected. How should they be handled?',
+            title: 'GitZip: Git Handling Mode'
           }
         );
         
         if (!gitExcludeChoice) return;
-        excludeGitFiles = gitExcludeChoice.label.startsWith('✅');
+        gitExclusionMode = gitExcludeChoice.id;
       }
 
       let customPath;
@@ -175,7 +182,7 @@ class cmds {
         customName,
         outputMode: outputMode.toLowerCase().split(' ')[0],
         customPath,
-        excludeGitFiles
+        gitExclusionMode
       });
       
       // Show success message

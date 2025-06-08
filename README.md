@@ -1,6 +1,6 @@
 # GitZip - Smart Compression Tool for All Developers
 
-**GitZip** is a powerful and flexible VSCode extension designed to simplify file and folder compression workflows for all kinds of developers—especially those working in Git-based projects and modern version-controlled environments. Whether you're building WordPress plugins, frontend components, Node.js modules, or distributing simple project archives, GitZip helps you package your code cleanly and efficiently.
+**GitZip** is a powerful and flexible VSCode **zip extension** and **archive tool** designed to simplify file and **folder compression** workflows. As a smart **zip tool**, it's perfect for developers working in Git-based projects. Whether you need to **compress a folder**, create a release **bundle**, or **archive a project** while respecting your `.gitignore`, GitZip helps you **package** your code cleanly and efficiently.
 
 Originally inspired by the limitations of existing zip extensions, GitZip extends the standard functionality with developer-centric options, smart Git awareness, and complete structural control.
 
@@ -18,12 +18,13 @@ Originally inspired by the limitations of existing zip extensions, GitZip extend
   * Parent folder (one level up)
   * Custom path (specify any location)
 
-* 🧠 **Smart Git-Aware Exclusions**:
+* 🧠 **Advanced Git Handling Modes**:
 
-  * Auto-detects `.git/` directories and `.gitignore` files
-  * Interactive prompt to include or exclude Git-related content
-  * Parses `.gitignore` rules to cleanly exclude unwanted files
-  * Great for generating release zips or upload-ready distributions
+  * **Auto-detects Git projects** (`.git` and `.gitignore`).
+  * **Offers three clear handling modes** for precise packaging:
+    1.  **Exclude .git & .gitignore**: Perfect for clean public releases. Removes Git history but still respects `.gitignore` rules to exclude unwanted files (like `node_modules`).
+    2.  **Keep .git & .gitignore**: Ideal for clean repository backups. Keeps Git history and the `.gitignore` file, but still excludes all files listed in `.gitignore`.
+    3.  **Include All**: Creates a full project snapshot, ignoring all `.gitignore` rules and including every file.
 
 * 📂 **Project Structure Preservation**:
 
@@ -64,32 +65,36 @@ npm run build
 
 ### Basic Usage
 
-1. Right-click any folder in the VSCode Explorer
-2. Choose **"GitZip: Compress"**
-3. Select your compression mode and output path
-4. (If applicable) Decide whether to exclude Git-related files
+1. Right-click any folder in the VSCode Explorer.
+2. Choose **"GitZip: Compress"**.
+3. Select your compression mode and output path.
+4. If a `.git` directory is detected, choose one of the three Git Handling Modes to package your project exactly as you need.
 
 ### Configurable Options
 
 * **Compression Mode**: Only contents / With folder / Custom name
 * **Output Directory**: Current / Parent / Custom
 * **Folder Naming**: Rename compressed folder in zip
-* **Git Exclusions**: Toggle `.git/` and `.gitignore` awareness
+* **Git Handling**: Choose how to package `.git`, `.gitignore`, and ignored files.
 
 All options are accessible through context menu or command palette.
 
-## 💡 Why Choose GitZip?
+## 💡 Who is GitZip For?
 
-GitZip is ideal for:
+This zip tool is built for any developer who needs more control over their compression workflow. It's especially powerful for:
 
-* Developers packaging **WordPress plugins/themes**
-* Creating **clean zip bundles** for upload or distribution
-* Avoiding the inclusion of unnecessary Git and config files
-* Teams working in **modular frontend/backend projects**
-* Ensuring **empty folders** are kept (often needed for frameworks)
-* Anyone needing **more than just "right-click → zip"**
+*   **WordPress Plugin & Theme Developers**: Easily package your plugins and themes for the official repository or for clients, automatically excluding development files.
+*   **Frontend & Node.js Developers**: Create clean, production-ready bundles of your React, Vue, or Node.js applications, leaving out `node_modules` and other dev dependencies.
+*   **Game Modders & Developers**: Package your game mods or web game builds, ensuring only the necessary assets and scripts are included.
+*   **VSCode Extension Authors**: Streamline the process of bundling your extension for the Marketplace.
+*   **Students & Educators**: Submit or share clean, lightweight project assignments without bulky dependency folders.
+*   **Anyone Creating Project Archives**: If you need to create a zip for distribution, backup, or sharing, GitZip's `.gitignore` integration ensures you only package what's necessary.
 
 Whether you're delivering a clean project archive, uploading a plugin, or saving a version snapshot, GitZip gives you complete control.
+
+## 🔑 Keywords
+
+`zip`, `unzip`, `compress`, `archive`, `decompress`, `zip tool`, `compression tool`, `archive tool`, `git zip`, `zip git`, `git archive`, `.gitignore`, `ignore files`, `package`, `bundle`, `release`, `folder zip`, `zip folder`, `vscode zip`, `zip extension`
 
 ## 🧪 Development & Contribution
 

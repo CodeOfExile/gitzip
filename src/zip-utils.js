@@ -227,7 +227,7 @@ async function getAllFiles(dir, files = [], baseDir = '') {
  * @param {string} [options.customName] - Custom folder name (for custom mode)
  * @param {string} [options.outputMode='parent'] - Output location (current/parent/custom)
  * @param {string} [options.customPath] - Custom output path (for custom output mode)
- * @param {boolean} [options.excludeGitFiles=false] - Whether to exclude .git directory and files ignored by .gitignore
+ * @param {string} [options.gitExclusionMode='include_all'] - Git handling mode (exclude_git/respect_gitignore/include_all)
  * @returns {Promise<vscode.Uri>} Path to created zip file
  */
 async function createZipFromFolder(folderUri, options = {}) {
@@ -236,7 +236,7 @@ async function createZipFromFolder(folderUri, options = {}) {
     customName,
     outputMode = 'parent',
     customPath,
-    excludeGitFiles = false
+    gitExclusionMode = 'include_all'
   } = options;
   
   try {
@@ -418,7 +418,8 @@ async function createZipFromFolder(folderUri, options = {}) {
       let ignoreRules = null;
       let gitFiles = { hasGit: false, hasGitignore: false };
       
-      if (excludeGitFiles) {
+      // Parse .gitignore if needed for exclusion or respecting rules
+      if (gitExclusionMode === 'exclude_git' || gitExclusionMode === 'respect_gitignore') {
         gitFiles = await checkGitFiles(folderAbsPath);
         
         if (gitFiles.hasGitignore) {
@@ -446,21 +447,22 @@ async function createZipFromFolder(folderUri, options = {}) {
         const { path: filePath, relativePath, isDirectory } = file;
         
         // Check if this file should be excluded when excludeGitFiles is true
-        if (excludeGitFiles) {
-          // Always exclude .git directory
-          if (gitFiles.hasGit && (relativePath === '.git' || relativePath.startsWith('.git/'))) {
-            skipped++;
-            continue;
+        // Check for exclusions based on the selected Git handling mode
+        if (gitExclusionMode !== 'include_all') {
+          // For 'exclude_git' mode, explicitly remove .git and .gitignore files
+          if (gitExclusionMode === 'exclude_git') {
+            if (gitFiles.hasGit && (relativePath === '.git' || relativePath.startsWith('.git/'))) {
+              skipped++;
+              continue;
+            }
+            if (gitFiles.hasGitignore && relativePath === '.gitignore') {
+              skipped++;
+              continue;
+            }
           }
-          
-          // Always exclude .gitignore file itself
-          if (gitFiles.hasGitignore && relativePath === '.gitignore') {
-            skipped++;
-            continue;
-          }
-          
-          // Exclude files based on .gitignore rules
-          if (gitFiles.hasGitignore && ignoreRules && ignoreRules.ignores(relativePath)) {
+
+          // For both 'exclude_git' and 'respect_gitignore', use the ignore rules
+          if (ignoreRules && ignoreRules.ignores(relativePath)) {
             skipped++;
             continue;
           }
