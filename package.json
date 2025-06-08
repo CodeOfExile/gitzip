@@ -289,6 +289,7 @@
   },
   "scripts": {
     "build": "webpack",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "package": "vsce package"
   }
 }
